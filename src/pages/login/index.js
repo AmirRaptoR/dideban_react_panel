@@ -21,7 +21,7 @@ class Login extends PureComponent {
       if (errors) {
         return
       }
-      dispatch({ type: 'login/login', payload: values })
+      dispatch({ type: 'login/login', payload: values });
     })
   }
 
@@ -94,16 +94,6 @@ class Login extends PureComponent {
               >
                 <Trans>Sign in</Trans>
               </Button>
-              <p>
-                <span>
-                  <Trans>Username</Trans>
-                  ：guest
-                </span>
-                <span>
-                  <Trans>Password</Trans>
-                  ：guest
-                </span>
-              </p>
             </Row>
           </form>
         </div>

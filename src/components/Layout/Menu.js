@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Menu, Icon } from 'antd'
 import Navlink from 'umi/navlink'
 import withRouter from 'umi/withRouter'
+import { withI18n } from '@lingui/react'
 import {
   arrayToTree,
   queryAncestors,
@@ -14,6 +15,7 @@ import store from 'store'
 const { SubMenu } = Menu
 
 @withRouter
+@withI18n()
 class SiderMenu extends PureComponent {
   state = {
     openKeys: store.get('openKeys') || [],
@@ -38,7 +40,8 @@ class SiderMenu extends PureComponent {
     store.set('openKeys', newOpenKeys)
   }
 
-  generateMenus = data => {
+  generateMenus = (data) => {
+    const { i18n } = this.props
     return data.map(item => {
       if (item.children) {
         return (
@@ -47,7 +50,7 @@ class SiderMenu extends PureComponent {
             title={
               <Fragment>
                 {item.icon && <Icon type={item.icon} />}
-                <span>{item.name}</span>
+                <span>{i18n._(item.name)}</span>
               </Fragment>
             }
           >
@@ -59,7 +62,7 @@ class SiderMenu extends PureComponent {
         <Menu.Item key={item.id}>
           <Navlink to={addLangPrefix(item.route) || '#'}>
             {item.icon && <Icon type={item.icon} />}
-            <span>{item.name}</span>
+            <span>{i18n._(item.name)}</span>
           </Navlink>
         </Menu.Item>
       )
@@ -74,10 +77,12 @@ class SiderMenu extends PureComponent {
       location,
       isMobile,
       onCollapseChange,
+      i18n
     } = this.props
-
     // Generating tree-structured data for menu content.
-    const menuTree = arrayToTree(menus, 'id', 'menuParentId')
+    let menuTree = arrayToTree(menus, 'id', 'menuParentId');
+    //     menuTree.forEach(x=>x.name=i18n.t([x.name]));
+    // console.log(menuTree)
 
     // Find a menu that matches the pathname.
     const currentMenu = menus.find(
@@ -92,8 +97,8 @@ class SiderMenu extends PureComponent {
     const menuProps = collapsed
       ? {}
       : {
-          openKeys: this.state.openKeys,
-        }
+        openKeys: this.state.openKeys,
+      }
 
     return (
       <Menu
@@ -105,13 +110,13 @@ class SiderMenu extends PureComponent {
         onClick={
           isMobile
             ? () => {
-                onCollapseChange(true)
-              }
+              onCollapseChange(true)
+            }
             : undefined
         }
         {...menuProps}
       >
-        {this.generateMenus(menuTree)}
+        {this.generateMenus(menuTree, i18n)}
       </Menu>
     )
   }

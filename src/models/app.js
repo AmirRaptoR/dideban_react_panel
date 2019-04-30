@@ -74,30 +74,27 @@ export default {
   },
   effects: {
     *query({ payload }, { call, put, select }) {
-      const { success, user } = yield call(queryUserInfo, payload)
+      let result = yield call(queryUserInfo, payload)
+      // const { success,user }  yield call(queryUserInfo, payload)
+      let success = result.success;
+      let user = result.data;
       const { locationPathname } = yield select(_ => _.app)
-
       if (success && user) {
-        const { list } = yield call(queryRouteList)
+        const { list } = (yield call(queryRouteList)).data
         const { permissions } = user
         let routeList = list
-        if (
-          permissions.role === ROLE_TYPE.ADMIN ||
-          permissions.role === ROLE_TYPE.DEVELOPER
-        ) {
-          permissions.visit = list.map(item => item.id)
-        } else {
-          routeList = list.filter(item => {
-            const cases = [
-              permissions.visit.includes(item.id),
-              item.mpid
-                ? permissions.visit.includes(item.mpid) || item.mpid === '-1'
-                : true,
-              item.bpid ? permissions.visit.includes(item.bpid) : true,
-            ]
-            return cases.every(_ => _)
-          })
-        }
+
+        routeList = list;
+        // .filter(item => {
+        //   const cases = [
+        //     permissions.includes(item.id),
+        //     item.mpid
+        //       ? permissions.includes(item.mpid) || item.mpid === '-1'
+        //       : true,
+        //     item.bpid ? permissions.visit.includes(item.bpid) : true,
+        //   ]
+        //   return cases.every(_ => _)
+        // })
         yield put({
           type: 'updateState',
           payload: {
@@ -106,7 +103,7 @@ export default {
             routeList,
           },
         })
-        if (pathMatchRegexp(['/','/login'], window.location.pathname)) {
+        if (pathMatchRegexp(['/', '/login'], window.location.pathname)) {
           router.push({
             pathname: '/dashboard',
           })

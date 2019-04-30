@@ -16,6 +16,7 @@ export default {
         const { from } = locationQuery
         yield put({ type: 'app/query' })
         if (!pathMatchRegexp('/login', from)) {
+          window.localStorage["token"] = data.data.data;
           if (from === '/') router.push('/dashboard')
           else router.push(from)
         } else {

@@ -11,13 +11,14 @@ import styles from './Bread.less'
 @withRouter
 class Bread extends PureComponent {
   generateBreadcrumbs = paths => {
+    const { i18n } = this.props
     return paths.map((item, key) => {
       const content = (
         <Fragment>
           {item.icon ? (
             <Icon type={item.icon} style={{ marginRight: 4 }} />
           ) : null}
-          {item.name}
+          {i18n._(item.name)}
         </Fragment>
       )
 

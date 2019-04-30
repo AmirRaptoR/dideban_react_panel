@@ -1,9 +1,9 @@
 export default {
-  queryRouteList: '/routes',
+  queryRouteList: '/auth/routes',
 
-  queryUserInfo: '/user',
+  queryUserInfo: '/users/current',
   logoutUser: '/user/logout',
-  loginUser: 'POST /user/login',
+  loginUser: 'POST /auth/login',
 
   queryUser: '/user/:id',
   queryUserList: '/users',
@@ -15,4 +15,8 @@ export default {
   queryPostList: '/posts',
 
   queryDashboard: '/dashboard',
+
+  queryDeviceList: '/devices',
+  getDeviceTypes:'/devices/types',
+  getDeviceGroupes:'/devices/groups'
 }

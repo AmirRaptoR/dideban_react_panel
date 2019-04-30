@@ -12,6 +12,17 @@ export default function request(options) {
   let { data, url, method = 'get' } = options
   const cloneData = cloneDeep(data)
 
+  let token = window.localStorage["token"]
+  if(token){
+    if(options.headers){
+      options.headers["token"] = token
+    }else{
+      options.headers = {
+        "token":token
+      }
+    }
+  }
+
   try {
     let domain = ''
     const urlMatch = url.match(/[a-zA-z]+:\/\/[^/]*/)
@@ -51,9 +62,10 @@ export default function request(options) {
 
       let result = {}
       if (typeof data === 'object') {
-        result = data
         if (Array.isArray(data)) {
           result.list = data
+        }else{
+          result = data
         }
       } else {
         result.data = data
@@ -63,7 +75,7 @@ export default function request(options) {
         success: true,
         message: statusText,
         statusCode: status,
-        ...result,
+        data:result,
       })
     })
     .catch(error => {

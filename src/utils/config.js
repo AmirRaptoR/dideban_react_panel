@@ -2,7 +2,7 @@ module.exports = {
   siteName: 'Dideban',
   copyright: 'Ant Design Admin  © 2018 zuiidea',
   logoPath: '/logo.svg',
-  apiPrefix: '/api/v1',
+  apiPrefix: 'http://localhost:8080',
   fixedHeader: true, // sticky primary layout header
 
   /* Layout configuration, specify which layout to use for route. */
@@ -19,20 +19,15 @@ module.exports = {
     /* Countrys flags: https://www.flaticon.com/packs/countrys-flags */
     languages: [
       {
-        key: 'pt-br',
-        title: 'Português',
-        flag: '/brazil.svg',
+        key: 'fa',
+        title: 'فارسی',
+        flag: '/iran.svg',
       },
       {
         key: 'en',
         title: 'English',
         flag: '/america.svg',
-      },
-      {
-        key: 'zh',
-        title: '中文',
-        flag: '/china.svg',
-      },
+      }
     ],
     defaultLanguage: 'en',
   },

@@ -123,14 +123,14 @@ class Header extends PureComponent {
           </div>
         }
       >
-        <Badge
+        {/* <Badge
           count={notifications.length}
           dot
           offset={[-10, 10]}
           className={styles.iconButton}
         >
           <Icon className={styles.iconFont} type="bell" />
-        </Badge>
+        </Badge> */}
       </Popover>
     )
 
