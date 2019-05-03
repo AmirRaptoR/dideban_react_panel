@@ -78,7 +78,7 @@ class PrimaryLayout extends PureComponent {
 
     // Query whether you have permission to enter this page
     const hasPermission = currentRoute
-      ? (!permissions || permissions.includes(currentRoute.id))
+      ? (!(permissions && permissions.length)  || permissions.includes(currentRoute.id))
       : false
 
     // MenuParentId is equal to -1 is not a available menu.
