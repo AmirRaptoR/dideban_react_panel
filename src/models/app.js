@@ -21,7 +21,6 @@ import api from 'api'
 import config from 'config'
 
 const {
-  queryRouteList,
   logoutUser,
   queryUserInfo
 } = api
@@ -137,29 +136,15 @@ export default {
         locationPathname
       } = yield select(_ => _.app)
       if (success && user) {
-        // const { list } = (yield call(queryRouteList)).data
         const {
           permissions
         } = user
-        let routeList = list
 
-        routeList = list;
-        // .filter(item => {
-        //   const cases = [
-        //     permissions.includes(item.id),
-        //     item.mpid
-        //       ? permissions.includes(item.mpid) || item.mpid === '-1'
-        //       : true,
-        //     item.bpid ? permissions.visit.includes(item.bpid) : true,
-        //   ]
-        //   return cases.every(_ => _)
-        // })
         yield put({
           type: 'updateState',
           payload: {
             user,
             permissions,
-            routeList,
           },
         })
         if (pathMatchRegexp(['/', '/login'], window.location.pathname)) {

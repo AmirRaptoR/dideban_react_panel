@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
+import React, { createRef, Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'dva'
+import styles from './index.less'
 import {
   Map,
   TileLayer,
@@ -9,21 +10,57 @@ import {
   // PropTypes as MapPropTypes
 } from "react-leaflet";
 
+
 class MapView extends Component {
   state = {
-    lat: 51.505,
-    lng: -0.09,
+    center: {
+      lat: 51.505,
+      lng: -0.09,
+    },
+    markers: [
+    ],
     zoom: 13,
+    draggable: true,
+
   }
+
+  mapRef = createRef(Map);
+ refmarker = createRef(Marker)
+
+
+toggleDraggable = () => {
+  this.setState({ draggable: !this.state.draggable })
+}
+
+updatePosition = () => {
+  const marker = this.refmarker.current
+  if (marker != null) {
+    this.setState({
+      marker: marker.leafletElement.getLatLng(),
+    })
+  }
+}
   render() {
-    console.log(1)
-    const center = [this.state.lat, this.state.lng];
+    const position = [this.state.center.lat, this.state.center.lng]
+    const markerPosition = [this.state.marker.lat, this.state.marker.lng]
     return (
-      <Map center={center} zoom={this.state.zoom}>
+      <Map center={position} zoom={this.state.zoom}
+      >
       <TileLayer
-        attribution="&amp;copy <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        attribution=""
         url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
       />
+    <Marker
+          draggable={this.state.draggable}
+          onDragend={this.updatePosition}
+          position={markerPosition}
+          ref={this.refmarker}>
+          <Popup minWidth={90} keepInView={true}>
+            <span onClick={this.toggleDraggable}>
+              {this.state.draggable ? 'DRAG MARKER' : 'MARKER FIXED'}
+            </span>
+          </Popup>
+        </Marker>
     </Map>
     )
   }
