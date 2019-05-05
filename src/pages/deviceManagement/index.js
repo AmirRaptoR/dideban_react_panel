@@ -69,6 +69,7 @@ class DeviceManagement extends PureComponent {
     }
 
     const listProps = {
+      dispatch,
       dataSource: list,
       loading: loading.effects['device/query'],
       pagination,
@@ -93,11 +94,16 @@ class DeviceManagement extends PureComponent {
       },
       onEditItem(item) {
         dispatch({
-          type: 'device/showModal',
-          payload: {
-            modalType: 'device',
-            currentItem: item,
-          },
+          type: 'device/getDevice',
+          payload: item.id
+        }).then((d) => {
+          dispatch({
+            type: 'device/showModal',
+            payload: {
+              modalType: 'update',
+              currentItem: d,
+            },
+          })
         })
       },
       rowSelection: {

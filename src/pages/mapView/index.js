@@ -42,7 +42,7 @@ updatePosition = () => {
 }
   render() {
     const position = [this.state.center.lat, this.state.center.lng]
-    const markerPosition = [this.state.marker.lat, this.state.marker.lng]
+    // const markerPosition = [this.state.marker.lat, this.state.marker.lng]
     return (
       <Map center={position} zoom={this.state.zoom}
       >
@@ -50,7 +50,7 @@ updatePosition = () => {
         attribution=""
         url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
       />
-    <Marker
+    {/* <Marker
           draggable={this.state.draggable}
           onDragend={this.updatePosition}
           position={markerPosition}
@@ -60,7 +60,7 @@ updatePosition = () => {
               {this.state.draggable ? 'DRAG MARKER' : 'MARKER FIXED'}
             </span>
           </Popup>
-        </Marker>
+        </Marker> */}
     </Map>
     )
   }

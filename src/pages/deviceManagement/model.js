@@ -13,6 +13,7 @@ var globalBranches;
 
 const {
   queryDeviceList,
+  getDevice,
   getDeviceTypes,
   createDevice,
   updateDevice,
@@ -54,12 +55,7 @@ export default modelExtend(pageModel, {
   },
 
   effects: {
-    * query({
-      payload = {}
-    }, {
-      call,
-      put
-    }) {
+    *query({ payload = {} }, { call, put }) {
       const types = (yield call(getDeviceTypes, payload)).data.list
       const groups = (yield call(getDeviceGroupes, payload)).data.list
       const data = yield call(queryDeviceList, payload)
@@ -92,23 +88,21 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * delete({
-      payload
-    }, {
-      call,
-    }) {
-      const data = yield call(deleteDevice, {
+    *getDevice({ payload }, { call, put }) {
+      const data = yield call(getDevice, {
+        id: payload
+      })
+      return data.data;
+    },
+
+    *delete({ payload }, { call }) {
+      yield call(deleteDevice, {
         id: payload
       })
     },
 
-    * create({
-      payload
-    }, {
-      call,
-      put
-    }) {
-      const data = yield call(createUser, payload)
+    *create({ payload }, { call, put }) {
+      const data = yield call(createDevice, payload)
       if (data.success) {
         yield put({
           type: 'hideModal'
@@ -118,21 +112,8 @@ export default modelExtend(pageModel, {
       }
     },
 
-    * update({
-      payload
-    }, {
-      select,
-      call,
-      put
-    }) {
-      const id = yield select(({
-        user
-      }) => user.currentItem.id)
-      const newUser = {
-        ...payload,
-        id
-      }
-      const data = yield call(updateUser, newUser)
+    *update({ payload }, { call, put }) {
+      const data = yield call(updateDevice, payload)
       if (data.success) {
         yield put({
           type: 'hideModal'

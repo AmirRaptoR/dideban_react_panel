@@ -17,6 +17,7 @@ export default {
   queryDashboard: '/dashboard',
 
   queryDeviceList: '/devices',
+  getDevice: '/devices/:id',
   createDevice: 'POST /devices',
   updateDevice: 'POST /devices/:id',
   deleteDevice: 'DELETE /devices/:id',
