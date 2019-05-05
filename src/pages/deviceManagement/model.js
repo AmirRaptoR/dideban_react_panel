@@ -18,7 +18,9 @@ const {
   createDevice,
   updateDevice,
   deleteDevice,
-  getDeviceGroupes,
+  getDeviceGroups,
+  getDeviceDeviceGroups,
+  setDeviceDeviceGroups,
   getAllCities,
   getAllBranches
 } = api
@@ -28,7 +30,7 @@ export default modelExtend(pageModel, {
 
   state: {
     currentItem: {},
-    modalVisible: false,
+    modalVisible: null,
     modalType: 'create',
     selectedRowKeys: [],
     groups: []
@@ -57,7 +59,7 @@ export default modelExtend(pageModel, {
   effects: {
     *query({ payload = {} }, { call, put }) {
       const types = (yield call(getDeviceTypes, payload)).data.list
-      const groups = (yield call(getDeviceGroupes, payload)).data.list
+      const groups = (yield call(getDeviceGroups, payload)).data.list
       const data = yield call(queryDeviceList, payload)
       if (!globalCities) {
         globalCities = (yield call(getAllCities)).data;
@@ -86,6 +88,27 @@ export default modelExtend(pageModel, {
           },
         })
       }
+    },
+
+    *getDeviceGroups({ payload }, { call }) {
+      const data = yield call(getDeviceGroups, {
+      })
+      return data.data;
+    },
+
+    *getDeviceDeviceGroups({ payload }, { call }) {
+      const data = yield call(getDeviceDeviceGroups, {
+        id: payload
+      })
+      return data.data;
+    },
+
+    
+    *setDeviceDeviceGroups({ payload }, { call }) {
+      const data = yield call(setDeviceDeviceGroups, {
+        id: payload
+      })
+      return data.data;
     },
 
     *getDevice({ payload }, { call, put }) {
@@ -131,14 +154,15 @@ export default modelExtend(pageModel, {
       return {
         ...state,
         ...payload,
-        modalVisible: true
+        modalVisible: true,
+        modalName: payload.modalName,
       }
     },
-
     hideModal(state) {
       return {
         ...state,
-        modalVisible: false
+        modalVisible: false,
+        modalName: null
       }
     },
   },

@@ -69,7 +69,14 @@
   "Cancel":"انصراف",
   "DeviceManagement":"مدیریت دستگاه‌ها",
   "Map":"نقشه",
-  "Dashboard":"داشبورد"
+  "Dashboard":"داشبورد",
+  "DeviceGroup":"گروه دستگاهی",
+  "GEOGRAPHIC":"جغرافیایی",
+  "RESPONSIBLE":"مسئول",
+  "Has":"دارد",
+  "HasNot":"ندارد",
+  "HasResponsible":"دارای مسئول",
+  "DeviceCount":"تعداد دستگاه"
 
   
 }

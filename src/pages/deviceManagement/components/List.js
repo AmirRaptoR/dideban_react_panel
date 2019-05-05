@@ -11,20 +11,22 @@ const { confirm } = Modal
 @withI18n()
 class List extends PureComponent {
   handleMenuClick = (record, e) => {
-    const { onDeleteItem, onEditItem, i18n } = this.props
-const entity = 'Device'
+    const { onDeleteItem, onEditItem, i18n, onEditDeviceGroup } = this.props
+    const entity = 'Device'
 
     if (e.key === '1') {
       onEditItem(record)
     } else if (e.key === '2') {
       confirm({
         title: i18n.t`Are you sure you want to delete selected ${entity}?`,
-        okText:i18n.t`Ok`,
-        cancelText:i18n.t`Cancel`,
+        okText: i18n.t`Ok`,
+        cancelText: i18n.t`Cancel`,
         onOk() {
           onDeleteItem(record.id)
         },
       })
+    } else if (e.key === '3') {
+      onEditDeviceGroup(record)
     }
   }
 
@@ -73,6 +75,7 @@ const entity = 'Device'
               menuOptions={[
                 { key: '1', name: i18n.t`Update` },
                 { key: '2', name: i18n.t`Delete` },
+                { key: '3', name: i18n.t`DeviceGroups` },
               ]}
             />
           )

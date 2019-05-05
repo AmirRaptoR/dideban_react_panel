@@ -18,12 +18,14 @@ export default {
 
   queryDeviceList: '/devices',
   getDevice: '/devices/:id',
+  getDeviceDeviceGroups: '/devices/:id/groups',
+  setDeviceDeviceGroups: 'POST /devices/:id/groups',
   createDevice: 'POST /devices',
   updateDevice: 'POST /devices/:id',
   deleteDevice: 'DELETE /devices/:id',
 
   getDeviceTypes: '/devices/types',
-  getDeviceGroupes: '/devices/groups',
+  getDeviceGroups: '/devices/groups',
 
   getAllCities: '/cities',
   getAllBranches: '/branches'

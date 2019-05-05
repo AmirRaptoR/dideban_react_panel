@@ -74,17 +74,17 @@ class Filter extends Component {
   render() {
     const { onAdd, filter, form, i18n } = this.props
     const { getFieldDecorator } = form
-    const { deviceCode,deviceName,state,city,branch,deviceTypes,deviceGroups } = filter
-    const { allDeviceTypes,allDeviceGroups } = this.props
+    const { deviceCode, deviceName, state, city, branch, deviceTypes, deviceGroups } = filter
+    const { allDeviceTypes, allDeviceGroups } = this.props
     let deviceTypeOptions = []
-    if(allDeviceTypes){
+    if (allDeviceTypes) {
       for (let i = 0; i < allDeviceTypes.length; i++) {
-          deviceTypeOptions.push(<Option key={allDeviceTypes[i].id}>{allDeviceTypes[i].nameFa}</Option>)
+        deviceTypeOptions.push(<Option key={allDeviceTypes[i].id}>{allDeviceTypes[i].nameFa}</Option>)
       }
     }
 
     let deviceGroupsOptions = []
-    if(allDeviceGroups){
+    if (allDeviceGroups) {
       for (let i = 0; i < allDeviceGroups.length; i++) {
         deviceGroupsOptions.push(<Option key={allDeviceGroups[i].id}>{allDeviceGroups[i].name}</Option>)
       }
@@ -123,44 +123,47 @@ class Filter extends Component {
               onSearch={this.handleSubmit}
             />
           )}
-        </Col> <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+        </Col>
+        <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
           {getFieldDecorator('city', { initialValue: city })(
             <Search
               placeholder={i18n.t`City`}
               onSearch={this.handleSubmit}
             />
           )}
-        </Col> <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+        </Col>
+        <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
           {getFieldDecorator('branch', { initialValue: branch })(
             <Search
               placeholder={i18n.t`Branch`}
               onSearch={this.handleSubmit}
             />
           )}
-        </Col> <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
+        </Col>
+        <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
           {getFieldDecorator('deviceTypes', { initialValue: deviceTypes })(
             <Select
               mode="multiple"
               placeholder={i18n.t`Type`}
               onSearch={this.handleSubmit}
-              style={{width:'100%'}}
+              style={{ width: '100%' }}
             >
-            {deviceTypeOptions}
+              {deviceTypeOptions}
             </Select>
           )}
         </Col>
         <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-        {getFieldDecorator('deviceGroups', { initialValue: deviceGroups })(
-          <Select
-            mode="multiple"
-            placeholder={i18n.t`DeviceGroup`}
-            onSearch={this.handleSubmit}
-            style={{width:'100%'}}
-          >
-          {deviceGroupsOptions}
-          </Select>
-        )}
-      </Col>
+          {getFieldDecorator('deviceGroups', { initialValue: deviceGroups })(
+            <Select
+              mode="multiple"
+              placeholder={i18n.t`DeviceGroup`}
+              onSearch={this.handleSubmit}
+              style={{ width: '100%' }}
+            >
+              {deviceGroupsOptions}
+            </Select>
+          )}
+        </Col>
         <Col
           {...TwoColProps}
           xl={{ span: 10 }}

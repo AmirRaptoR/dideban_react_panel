@@ -9,12 +9,13 @@ import { stringify } from 'qs'
 import List from './components/List'
 import Filter from './components/Filter'
 import Modal from './components/Modal'
+import DeviceGroupModal from './components/DeviceGroups'
 
 @withI18n()
 @connect(({ device, loading }) => ({ device, loading }))
 class DeviceManagement extends PureComponent {
   render() {
-    const { location, dispatch, device, loading, i18n } = this.props
+    const { location, dispatch, device, loading, i18n, groups } = this.props
     const { query, pathname } = location
     const {
       list,
@@ -26,7 +27,8 @@ class DeviceManagement extends PureComponent {
       allDeviceTypes,
       allDeviceGroups,
       cities,
-      branches
+      branches,
+      modalName
     } = device
     const handleRefresh = newQuery => {
       router.push({
@@ -39,6 +41,36 @@ class DeviceManagement extends PureComponent {
           { arrayFormat: 'repeat' }
         ),
       })
+    }
+    const deviceGroupModalProps = {
+      deviceGroups: [],
+      allDeviceGroups: [],
+      visible: modalVisible,
+      maskClosable: false,
+      confirmLoading: loading.effects[`device/${modalType}`],
+      title: i18n.t`DeviceDeviceGroups`,
+      centered: true,
+      groups: device.groups.list,
+      deviceId: currentItem.id,
+      onOk(data) {
+        console.log("ok", data)
+        dispatch({
+          type: 'device/setDeviceDeviceGroups',
+          payload: {
+            id: data.id,
+            data: data.groups.map(x => x.id)
+          }
+        }).then(() => {
+          dispatch({
+            type: 'device/hideModal',
+          })
+        })
+      },
+      onCancel() {
+        dispatch({
+          type: 'device/hideModal',
+        })
+      }
     }
 
     const modalProps = {
@@ -96,27 +128,33 @@ class DeviceManagement extends PureComponent {
         dispatch({
           type: 'device/getDevice',
           payload: item.id
-        }).then((d) => {
+        }).then((device) => {
           dispatch({
             type: 'device/showModal',
             payload: {
               modalType: 'update',
-              currentItem: d,
+              currentItem: device,
+              modalName: 'device'
             },
           })
         })
       },
-      rowSelection: {
-        selectedRowKeys,
-        onChange: keys => {
+      onEditDeviceGroup(item) {
+        dispatch({
+          type: 'device/getDeviceDeviceGroups',
+          payload: item.id
+        }).then((groups) => {
           dispatch({
-            type: 'device/updateState',
+            type: 'device/showModal',
             payload: {
-              selectedRowKeys: keys,
+              modalType: 'update',
+              currentItem: item,
+              modalName: 'deviceGroups',
+              groups
             },
           })
-        },
-      },
+        })
+      }
     }
 
     const filterProps = {
@@ -136,6 +174,7 @@ class DeviceManagement extends PureComponent {
           type: 'device/showModal',
           payload: {
             modalType: 'create',
+            modalName: 'device'
           },
         })
       },
@@ -156,7 +195,6 @@ class DeviceManagement extends PureComponent {
         })
       })
     }
-
     return (
       <Page inner>
         <Filter {...filterProps} />
@@ -177,7 +215,8 @@ class DeviceManagement extends PureComponent {
           </Row>
         )}
         <List {...listProps} />
-        {modalVisible && <Modal {...modalProps} />}
+        {(modalVisible && modalName == 'device') && <Modal {...modalProps} />}
+        {(modalVisible && modalName == 'deviceGroups') && <DeviceGroupModal {...deviceGroupModalProps} />}
       </Page>
     )
   }
