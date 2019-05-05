@@ -1,8 +1,13 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Input, InputNumber, Radio, Modal, Cascader } from 'antd'
+import { Form, Input, InputNumber, Radio, Modal, Cascader, Select } from 'antd'
 import { Trans, withI18n } from '@lingui/react'
-import city from 'utils/city'
+const Option = Select.Option;
+import api from 'api'
+const {
+  getAllCities,
+  getAllBranches
+} = api
 
 const FormItem = Form.Item
 
@@ -35,12 +40,108 @@ class UserModal extends PureComponent {
   }
 
   render() {
-    const { item = {}, onOk, form, i18n, ...modalProps } = this.props
+    const { item = {}, onOk, form, i18n, cities, branches, deviceTypes, ...modalProps } = this.props
     const { getFieldDecorator } = form
-
+    const cityOptions = cities ? (cities.list.map(x => <Option key={x.id}>{x.name}</Option>)) : [];
+    const branchOptions = branches ? (branches.list.map(x => <Option key={x.id}>{x.name}</Option>)) : [];
+    const deviceTypeOptions = deviceTypes ? (deviceTypes.map(x => <Option key={x.id}>{x.nameFa}</Option>)) : [];
     return (
       <Modal {...modalProps} onOk={this.handleOk}>
         <Form layout="horizontal">
+          <FormItem label={i18n.t`Mac`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('mac', {
+              initialValue: item.name,
+              rules: [
+                {
+                  required: true,
+                  pattern : /^[0-9a-f]{1,2}([\.:-])(?:[0-9a-f]{1,2}\1){4}[0-9a-f]{1,2}$/,
+                  message: 'Mac Address format is invalid'
+                },
+              ],
+            })(<Input />)}
+          </FormItem>
+          <FormItem label={i18n.t`Ip`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('ip', {
+              initialValue: item.nickName,
+              rules: [
+                {
+                  required: true,
+                  pattern : /^(?!0)(?!.*\.$)((1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/,
+                  message: 'No a valid ip address'
+                },
+              ],
+            })(<Input />)}
+          </FormItem>
+          <FormItem label={i18n.t`City`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('cityId', {
+              initialValue: item.cityId,
+              rules: [
+                {
+                  required: true,
+                },
+              ],
+            })(
+              <Select
+                showSearch
+                style={{ width: 200 }}
+                placeholder="Select a city"
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+              {cityOptions}
+              </Select>
+            )}
+          </FormItem>
+          <FormItem label={i18n.t`Branch`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('branchId', {
+              initialValue: item.branchId,
+              rules: [
+                {
+                  required: true,
+                },
+              ],
+            })(
+              <Select
+                showSearch
+                style={{ width: 200 }}
+                placeholder="Select branch"
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+              {branchOptions}
+              </Select>
+            )}
+          </FormItem>
+          <FormItem label={i18n.t`Type`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('type', {
+              initialValue: item.type,
+              rules: [
+                {
+                  required: true,
+                },
+              ],
+            })(
+              <Select
+                showSearch
+                style={{ width: 200 }}
+                placeholder="Select device type"
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+              {deviceTypeOptions}
+              </Select>
+            )}
+          </FormItem>
+          <FormItem label={i18n.t`Code`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('code', {
+              initialValue: item.code,
+              rules: [
+                {
+                  required: true,
+                },
+              ],
+            })(<Input />)}
+          </FormItem>
           <FormItem label={i18n.t`Name`} hasFeedback {...formItemLayout}>
             {getFieldDecorator('name', {
               initialValue: item.name,
@@ -50,87 +151,6 @@ class UserModal extends PureComponent {
                 },
               ],
             })(<Input />)}
-          </FormItem>
-          <FormItem label={i18n.t`NickName`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('nickName', {
-              initialValue: item.nickName,
-              rules: [
-                {
-                  required: true,
-                },
-              ],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label={i18n.t`Gender`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('isMale', {
-              initialValue: item.isMale,
-              rules: [
-                {
-                  required: true,
-                  type: 'boolean',
-                },
-              ],
-            })(
-              <Radio.Group>
-                <Radio value>
-                  <Trans>Male</Trans>
-                </Radio>
-                <Radio value={false}>
-                  <Trans>Female</Trans>
-                </Radio>
-              </Radio.Group>
-            )}
-          </FormItem>
-          <FormItem label={i18n.t`Age`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('age', {
-              initialValue: item.age,
-              rules: [
-                {
-                  required: true,
-                  type: 'number',
-                },
-              ],
-            })(<InputNumber min={18} max={100} />)}
-          </FormItem>
-          <FormItem label={i18n.t`Phone`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('phone', {
-              initialValue: item.phone,
-              rules: [
-                {
-                  required: true,
-                  pattern: /^1[34578]\d{9}$/,
-                  message: i18n.t`The input is not valid phone!`,
-                },
-              ],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label={i18n.t`Email`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('email', {
-              initialValue: item.email,
-              rules: [
-                {
-                  required: true,
-                  pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                  message: i18n.t`The input is not valid E-mail!`,
-                },
-              ],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label={i18n.t`Address`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('address', {
-              initialValue: item.address && item.address.split(' '),
-              rules: [
-                {
-                  required: true,
-                },
-              ],
-            })(
-              <Cascader
-                style={{ width: '100%' }}
-                options={city}
-                placeholder={i18n.t`Pick an address`}
-              />
-            )}
           </FormItem>
         </Form>
       </Modal>

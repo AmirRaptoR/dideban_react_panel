@@ -66,6 +66,10 @@
   "DevicesManagement":"مدیریت دستگاه‌ها",
   "emptyText":"داده‌ای موجود نیست",
   "Ok":"بله",
-  "Cancel":"انصراف"
+  "Cancel":"انصراف",
+  "DeviceManagement":"مدیریت دستگاه‌ها",
+  "Map":"نقشه",
+  "Dashboard":"داشبورد"
+
   
 }

@@ -17,6 +17,13 @@ export default {
   queryDashboard: '/dashboard',
 
   queryDeviceList: '/devices',
-  getDeviceTypes:'/devices/types',
-  getDeviceGroupes:'/devices/groups'
+  createDevice: 'POST /devices',
+  updateDevice: 'POST /devices/:id',
+  deleteDevice: 'DELETE /devices/:id',
+
+  getDeviceTypes: '/devices/types',
+  getDeviceGroupes: '/devices/groups',
+
+  getAllCities: '/cities',
+  getAllBranches: '/branches'
 }

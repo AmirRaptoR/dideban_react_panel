@@ -140,7 +140,7 @@ class Filter extends Component {
         </Col> <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
           {getFieldDecorator('deviceTypes', { initialValue: deviceTypes })(
             <Select
-              mode="tags"
+              mode="multiple"
               placeholder={i18n.t`Type`}
               onSearch={this.handleSubmit}
               style={{width:'100%'}}
@@ -152,8 +152,8 @@ class Filter extends Component {
         <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
         {getFieldDecorator('deviceGroups', { initialValue: deviceGroups })(
           <Select
-            mode="tags"
-            placeholder={i18n.t`Type`}
+            mode="multiple"
+            placeholder={i18n.t`DeviceGroup`}
             onSearch={this.handleSubmit}
             style={{width:'100%'}}
           >
@@ -161,25 +161,6 @@ class Filter extends Component {
           </Select>
         )}
       </Col>
-        {/* <Col
-          {...ColProps}
-          xl={{ span: 4 }}
-          md={{ span: 8 }}
-          id="addressCascader"
-        >
-          {getFieldDecorator('address', { initialValue: address })(
-            <Cascader
-              style={{ width: '100%' }}
-              options={city}
-              placeholder={i18n.t`Please pick an address`}
-              onChange={this.handleChange.bind(this, 'address')}
-              getPopupContainer={() =>
-                document.getElementById('addressCascader')
-              }
-            />
-          )}
-        </Col> */}
-      
         <Col
           {...TwoColProps}
           xl={{ span: 10 }}

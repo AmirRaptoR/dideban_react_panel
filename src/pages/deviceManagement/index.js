@@ -11,10 +11,10 @@ import Filter from './components/Filter'
 import Modal from './components/Modal'
 
 @withI18n()
-@connect(({ user, loading }) => ({ user, loading }))
+@connect(({ device, loading }) => ({ device, loading }))
 class DeviceManagement extends PureComponent {
   render() {
-    const { location, dispatch, user, loading, i18n } = this.props
+    const { location, dispatch, device, loading, i18n } = this.props
     const { query, pathname } = location
     const {
       list,
@@ -24,8 +24,10 @@ class DeviceManagement extends PureComponent {
       modalType,
       selectedRowKeys,
       allDeviceTypes,
-      allDeviceGroups
-    } = user
+      allDeviceGroups,
+      cities,
+      branches
+    } = device
     const handleRefresh = newQuery => {
       router.push({
         pathname,
@@ -43,14 +45,17 @@ class DeviceManagement extends PureComponent {
       item: modalType === 'create' ? {} : currentItem,
       visible: modalVisible,
       maskClosable: false,
-      confirmLoading: loading.effects[`user/${modalType}`],
+      confirmLoading: loading.effects[`device/${modalType}`],
       title: `${
-        modalType === 'create' ? i18n.t`Create User` : i18n.t`Update User`
-      }`,
+        modalType === 'create' ? i18n.t`CreateDevice` : i18n.t`UpdateDevice`
+        }`,
       centered: true,
+      cities,
+      branches,
+      deviceTypes: allDeviceTypes,
       onOk(data) {
         dispatch({
-          type: `user/${modalType}`,
+          type: `device/${modalType}`,
           payload: data,
         }).then(() => {
           handleRefresh()
@@ -58,14 +63,14 @@ class DeviceManagement extends PureComponent {
       },
       onCancel() {
         dispatch({
-          type: 'user/hideModal',
+          type: 'device/hideModal',
         })
       },
     }
 
     const listProps = {
       dataSource: list,
-      loading: loading.effects['user/query'],
+      loading: loading.effects['device/query'],
       pagination,
       onChange(page) {
         handleRefresh({
@@ -75,7 +80,7 @@ class DeviceManagement extends PureComponent {
       },
       onDeleteItem(id) {
         dispatch({
-          type: 'user/delete',
+          type: 'device/delete',
           payload: id,
         }).then(() => {
           handleRefresh({
@@ -88,9 +93,9 @@ class DeviceManagement extends PureComponent {
       },
       onEditItem(item) {
         dispatch({
-          type: 'user/showModal',
+          type: 'device/showModal',
           payload: {
-            modalType: 'update',
+            modalType: 'device',
             currentItem: item,
           },
         })
@@ -99,7 +104,7 @@ class DeviceManagement extends PureComponent {
         selectedRowKeys,
         onChange: keys => {
           dispatch({
-            type: 'user/updateState',
+            type: 'device/updateState',
             payload: {
               selectedRowKeys: keys,
             },
@@ -122,7 +127,7 @@ class DeviceManagement extends PureComponent {
       },
       onAdd() {
         dispatch({
-          type: 'user/showModal',
+          type: 'device/showModal',
           payload: {
             modalType: 'create',
           },
@@ -132,7 +137,7 @@ class DeviceManagement extends PureComponent {
 
     const handleDeleteItems = () => {
       dispatch({
-        type: 'user/multiDelete',
+        type: 'device/multiDelete',
         payload: {
           ids: selectedRowKeys,
         },
@@ -173,7 +178,7 @@ class DeviceManagement extends PureComponent {
 }
 
 DeviceManagement.propTypes = {
-  user: PropTypes.object,
+  device: PropTypes.object,
   location: PropTypes.object,
   dispatch: PropTypes.func,
   loading: PropTypes.object,
