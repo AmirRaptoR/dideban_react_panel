@@ -105,8 +105,10 @@ export default modelExtend(pageModel, {
 
     
     *setDeviceDeviceGroups({ payload }, { call }) {
+      console.log(payload)
       const data = yield call(setDeviceDeviceGroups, {
-        id: payload
+        id: payload.id,
+        deviceGroupIds: payload.data
       })
       return data.data;
     },

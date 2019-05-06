@@ -16,7 +16,8 @@ class DeviceGroupsModal extends PureComponent {
         return
       }
       const data = {
-        groups: this.props.groups
+        groups: this.props.groups,
+        id : this.props.deviceId
       }
       onOk(data)
     })

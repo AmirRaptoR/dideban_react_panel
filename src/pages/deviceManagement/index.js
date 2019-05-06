@@ -53,12 +53,11 @@ class DeviceManagement extends PureComponent {
       groups: device.groups.list,
       deviceId: currentItem.id,
       onOk(data) {
-        console.log("ok", data)
         dispatch({
           type: 'device/setDeviceDeviceGroups',
           payload: {
             id: data.id,
-            data: data.groups.map(x => x.id)
+            data: data.groups.filter(x=>x.isInDevice).map(x => x.id)
           }
         }).then(() => {
           dispatch({
