@@ -1,7 +1,4 @@
 import React, { createRef, Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'dva'
-import styles from './index.less'
 import {
   Map,
   TileLayer,
@@ -9,60 +6,74 @@ import {
   Popup
   // PropTypes as MapPropTypes
 } from "react-leaflet";
+import style from './index.less'
+import Axios from 'axios';
 
 
 class MapView extends Component {
   state = {
-    center: {
-      lat: 51.505,
-      lng: -0.09,
-    },
-    markers: [
-    ],
-    zoom: 13,
+    center: { lat: 33.1172316, lng: 55.5597364 },
+    zoom: 6,
     draggable: true,
 
   }
 
-  mapRef = createRef(Map);
- refmarker = createRef(Marker)
-
-
-toggleDraggable = () => {
-  this.setState({ draggable: !this.state.draggable })
-}
-
-updatePosition = () => {
-  const marker = this.refmarker.current
-  if (marker != null) {
-    this.setState({
-      marker: marker.leafletElement.getLatLng(),
-    })
-  }
-}
   render() {
+
     const position = [this.state.center.lat, this.state.center.lng]
-    // const markerPosition = [this.state.marker.lat, this.state.marker.lng]
-    return (
-      <Map center={position} zoom={this.state.zoom}
-      >
-      <TileLayer
-        attribution=""
-        url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-      />
-    {/* <Marker
-          draggable={this.state.draggable}
-          onDragend={this.updatePosition}
-          position={markerPosition}
-          ref={this.refmarker}>
+
+    const markers = this.state.markers ? this.state.markers.map((x,i) =>
+      <Marker key={i} position={[x.lat, x.lng]} >
+          {x.deviceId ? <Popup minWidth={90} keepInView={true}>
+          <span>
+            {x.faults} / {x.total}
+          </span>
+        </Popup>
+          :
           <Popup minWidth={90} keepInView={true}>
-            <span onClick={this.toggleDraggable}>
-              {this.state.draggable ? 'DRAG MARKER' : 'MARKER FIXED'}
-            </span>
+            <span>{x.deviceId}</span>
           </Popup>
-        </Marker> */}
-    </Map>
+        }
+      </Marker>) : [];
+    return (
+      <div>
+      <button onClick={this.refreshMap.bind(this)}>{"refresh"}</button>
+
+      <Map center={position} zoom={this.state.zoom} onZoom={this.onZoomChanged.bind(this)}>
+        <TileLayer
+          attribution=""
+          url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+        />
+        {markers}
+      </Map>
+      </div>
     )
+	}
+	oncomponentmount(){
+		console.log(this)
+		this.refreshMap();
+	}
+	
+	onZoomChanged(event){
+		this.setState({zoom:event.target._zoom})
+		this.refreshMap();
+	}
+
+  refreshMap(){
+		var self = this;
+		var type = "None";
+		if(this.state.zoom < 13){
+			type = "City";
+		}
+		if(this.state.zoom < 9){
+			type ="State"
+		}
+    Axios.get(`http://localhost:8080/map?level=${type}`).then(response=>{
+      self.setState({
+        markers:response.data
+      })
+    })
+
   }
 }
 
