@@ -20,18 +20,20 @@ class MapView extends Component {
 
   render() {
 
-    const position = [this.state.center.lat, this.state.center.lng]
 
+    const position = [this.state.center.lat, this.state.center.lng]
     const markers = this.state.markers ? this.state.markers.map((x,i) =>
       <Marker key={i} position={[x.lat, x.lng]} >
-          {x.deviceId ? <Popup minWidth={90} keepInView={true}>
+          {!x.deviceId ? 
+          <Popup minWidth={90} keepInView={true}>
           <span>
             {x.faults} / {x.total}
           </span>
         </Popup>
           :
           <Popup minWidth={90} keepInView={true}>
-            <span>{x.deviceId}</span>
+            <p>{x.deviceId}</p>
+            <p style={ {color:x.color }}>{x.tooltip}</p>
           </Popup>
         }
       </Marker>) : [];
@@ -49,7 +51,7 @@ class MapView extends Component {
       </div>
     )
 	}
-	oncomponentmount(){
+	componentDidMount(){
 		console.log(this)
 		this.refreshMap();
 	}
@@ -68,7 +70,12 @@ class MapView extends Component {
 		if(this.state.zoom < 9){
 			type ="State"
 		}
-    Axios.get(`http://localhost:8080/map?level=${type}`).then(response=>{
+    Axios.get(`http://localhost:8080/map?level=${type}`,
+    {
+      headers:{
+        token:window.localStorage.token
+      }
+    }).then(response=>{
       self.setState({
         markers:response.data
       })

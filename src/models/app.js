@@ -85,6 +85,15 @@ export default {
       history
     }) {
       history.listen(location => {
+
+        if (!pathMatchRegexp(['/login'], window.location.pathname) &&
+        !window.localStorage.token) {
+        router.push({
+          pathname: '/login',
+        })
+        return;
+      }
+  
         dispatch({
           type: 'updateState',
           payload: {
@@ -147,6 +156,7 @@ export default {
             permissions,
           },
         })
+
         if (pathMatchRegexp(['/', '/login'], window.location.pathname)) {
           router.push({
             pathname: '/dashboard',
@@ -168,30 +178,10 @@ export default {
       call,
       put
     }) {
-      const data = yield call(logoutUser)
-      if (data.success) {
-        yield put({
-          type: 'updateState',
-          payload: {
-            user: {},
-            permissions: {
-              visit: []
-            },
-            menu: [{
-              id: '1',
-              icon: 'laptop',
-              name: 'Dashboard',
-              zhName: '仪表盘',
-              router: '/dashboard',
-            }, ],
-          },
+      window.localStorage.removeItem('token');
+        router.push({
+          pathname: '/login',
         })
-        yield put({
-          type: 'query'
-        })
-      } else {
-        throw data
-      }
     },
   },
   reducers: {
