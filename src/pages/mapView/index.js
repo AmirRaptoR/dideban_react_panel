@@ -7,7 +7,9 @@ import {
   // PropTypes as MapPropTypes
 } from "react-leaflet";
 import style from './index.less'
+
 import Axios from 'axios';
+import { wsPrefix } from '../../utils/config'
 
 
 class MapView extends Component {
@@ -22,64 +24,74 @@ class MapView extends Component {
 
 
     const position = [this.state.center.lat, this.state.center.lng]
-    const markers = this.state.markers ? this.state.markers.map((x,i) =>
+    const markers = this.state.markers ? this.state.markers.map((x, i) =>
       <Marker key={i} position={[x.lat, x.lng]} >
-          {!x.deviceId ? 
+        {!x.deviceId ?
           <Popup minWidth={90} keepInView={true}>
-          <span>
-            {x.faults} / {x.total}
-          </span>
-        </Popup>
+            <span>
+              {x.faults} / {x.total}
+            </span>
+          </Popup>
           :
           <Popup minWidth={90} keepInView={true}>
             <p>{x.deviceId}</p>
-            <p style={ {color:x.color }}>{x.tooltip}</p>
+            <p style={{ color: x.color }}>{x.tooltip}</p>
           </Popup>
         }
       </Marker>) : [];
     return (
       <div>
-      <button onClick={this.refreshMap.bind(this)}>{"refresh"}</button>
+        <button onClick={this.refreshMap.bind(this)}>{"refresh"}</button>
 
-      <Map center={position} zoom={this.state.zoom} onZoom={this.onZoomChanged.bind(this)}>
-        <TileLayer
-          attribution=""
-          url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-        />
-        {markers}
-      </Map>
+        <Map center={position} zoom={this.state.zoom} onZoom={this.onZoomChanged.bind(this)}>
+          <TileLayer
+            attribution=""
+            url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+          />
+          {markers}
+        </Map>
       </div>
     )
-	}
-	componentDidMount(){
-		console.log(this)
-		this.refreshMap();
-	}
-	
-	onZoomChanged(event){
-		this.setState({zoom:event.target._zoom})
-		this.refreshMap();
-	}
+  }
 
-  refreshMap(){
-		var self = this;
-		var type = "None";
-		if(this.state.zoom < 13){
-			type = "City";
-		}
-		if(this.state.zoom < 9){
-			type ="State"
-		}
+
+  componentDidMount() {
+    this.ws = new WebSocket(wsPrefix + "/mapNotify");
+    var self = this;
+    this.ws.onmessage = function (data) {
+      console.log(data);
+      self.refreshMap();
+    }
+  }
+
+  componentWillUnmount() {
+    this.ws.close();
+  }
+
+  onZoomChanged(event) {
+    this.setState({ zoom: event.target._zoom })
+    this.refreshMap();
+  }
+
+  refreshMap() {
+    var self = this;
+    var type = "None";
+    if (this.state.zoom < 13) {
+      type = "City";
+    }
+    if (this.state.zoom < 9) {
+      type = "State"
+    }
     Axios.get(`http://localhost:8080/map?level=${type}`,
-    {
-      headers:{
-        token:window.localStorage.token
-      }
-    }).then(response=>{
-      self.setState({
-        markers:response.data
+      {
+        headers: {
+          token: window.localStorage.token
+        }
+      }).then(response => {
+        self.setState({
+          markers: response.data
+        })
       })
-    })
 
   }
 }
