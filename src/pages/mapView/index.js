@@ -6,10 +6,11 @@ import {
   Popup
   // PropTypes as MapPropTypes
 } from "react-leaflet";
-import style from './index.less'
 
+import Leaflet from 'leaflet';
+import style from './index.less'
 import Axios from 'axios';
-import { wsPrefix } from '../../utils/config'
+import { wsPrefix, apiPrefix } from '../../utils/config'
 
 
 class MapView extends Component {
@@ -23,13 +24,39 @@ class MapView extends Component {
   render() {
 
 
+
     const position = [this.state.center.lat, this.state.center.lng]
     const markers = this.state.markers ? this.state.markers.map((x, i) =>
-      <Marker key={i} position={[x.lat, x.lng]} >
+      <Marker key={i} position={[x.lat, x.lng]} icon={Leaflet.divIcon({
+        className: "my-custom-pin",
+        iconAnchor: [0, 24],
+        labelAnchor: [-6, 0],
+        popupAnchor: [0, -36],
+        html: `<span style="${`
+        background-color: ${x.color};
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        width: 50px;
+        height: 50px;
+        display: block;
+        text-align: center;
+        padding-top: 10px;
+        left: -25px;
+        top: -25px;
+        position: relative;
+        border-radius: 50%;
+        border: 1px solid #FFFFFF`}" >
+        ${!x.deviceId ? x.tooltip + '<br/>' + x.faults + '/' + x.total : x.tooltip}
+        </span>`
+      })}>
         {!x.deviceId ?
           <Popup minWidth={90} keepInView={true}>
-            <span>
-              {x.faults} / {x.total}
+            <span style={{ color: x.color }}>
+              <p>
+                {x.tooltip}
+              </p>
+              <p>{x.faults} / {x.total}</p>
             </span>
           </Popup>
           :
@@ -48,7 +75,7 @@ class MapView extends Component {
             attribution=""
             url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
           />
-          {markers}
+            {markers}
         </Map>
       </div>
     )
@@ -62,6 +89,7 @@ class MapView extends Component {
       console.log(data);
       self.refreshMap();
     }
+    this.refreshMap();
   }
 
   componentWillUnmount() {
@@ -82,12 +110,19 @@ class MapView extends Component {
     if (this.state.zoom < 9) {
       type = "State"
     }
-    Axios.get(`http://localhost:8080/map?level=${type}`,
+    if (this.cancelToken != null) {
+      console.log("cancel prev requ")
+      this.cancelToken.cancel();
+    }
+    this.cancelToken = Axios.CancelToken.source();
+    Axios.get(`${apiPrefix}/map?level=${type}`,
       {
         headers: {
           token: window.localStorage.token
-        }
+        },
+        cancelToken: this.cancelToken.token
       }).then(response => {
+        self.cancelToken = null;
         self.setState({
           markers: response.data
         })
